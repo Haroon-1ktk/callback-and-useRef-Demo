@@ -1,14 +1,50 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 function App() {
-  const [length,setLength]=useState(8);
+  const [length,setLength]=useState("8");
   const [numbersallowed,setNumbersallowed]=useState(false);
    const [charAllowed,setCharAllowed]=useState(false)
    const [password,setPassword]=useState('')
 
-   const passwordGenerator=useCallback(fn,[])
+   const passwordGenerator=useCallback(()=>{
+    let pass=""
+    let str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    if(numbersallowed)str+="0123456789"
+    if(charAllowed)str+="!@#$%^&*-_+={}~`"
+    for (let i = 1; i <=length; i++) {
+      let char=Math.floor(Math.random()*str.length+1)
+      pass+=str.charAt(char)
+    }
+    setPassword(pass)
+   },[length,numbersallowed,charAllowed,setPassword])
+   useEffect(()=>{
+    passwordGenerator()
+   },[length,numbersallowed,charAllowed,setPassword,passwordGenerator])
   return (
-   <h1 className='bg-red-500'>Hello</h1>
+ <div className="w-full max-w-md mx-auto shadow-md rounded-lg px-4 my-8 text-orange-500 bg-gray-800">
+  <h1 className="text-center my-3 text-white font-bold">PasswordGenerator</h1>
+  <div className="flex shadow-rounded-lg overflow-hidden ">
+    <input type="text" value={password} className="outline-none w-full px-3 mb-4" placeholder="Password" readOnly/>
+    <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0 mb-4">Copy</button>
+  </div>
+  <div className="flex text-sm gap-x-2">
+    <div className="flex items-center gap-x-1">
+      <input type="range" min={8} max={100} value={length} id="" className="cursor-pointer"
+      onChange={(e)=>setLength(e.target.value)}/>
+      <label>Length:{length}</label>
+    </div>
+    <div className="flex items-center gap-x-1">
+      <input type="checkbox" defaultChecked={numbersallowed} id="numberInput" 
+      onChange={()=>{setNumbersallowed((prev)=>!prev)}}/>
+       <label>Numbers</label>
+    </div>
+    <div className="flex items-center gap-x-1">
+      <input type="checkbox" defaultChecked={charAllowed} id="charAllowed" 
+      onChange={()=>{setCharAllowed((prev)=>!prev)}}/>
+       <label>Characters</label>
+    </div>
+  </div>
+ </div>
   );
 }
 
